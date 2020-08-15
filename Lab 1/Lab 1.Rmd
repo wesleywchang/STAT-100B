@@ -1,0 +1,216 @@
+---
+title: "STAT 100B Lab 1"
+author: "Wesley Chang"
+date: "Summer 2020 Session B"
+output: pdf_document
+---
+
+
+## Lab Exercises
+
+**Setup code for Lab Assignment**
+  
+```{r message = FALSE, warning = FALSE}
+source("http://www.openintro.org/stat/data/arbuthnot.R")
+```
+
+*Get sourcefile from [openintro.org](http://www.openintro.org/stat/data/arbuthnot.R)*
+  
+  
+  
+### Exercise 1
+
+*What command would you use to extract just the counts of girls baptized?*
+
+
+
+**Answer**
+```{r message = FALSE, warning = FALSE}
+arbuthnot$girls
+```
+
+
+
+### Exercise 2
+
+*Is there an apparent trend in the number of girls baptized over the years? How would you describe it?*
+
+
+
+**Code to display plot of number of girls baptized vs year**
+```{r message = FALSE, warning = FALSE}
+plot(x = arbuthnot$year, 
+    y = arbuthnot$girls, 
+    type = "l", 
+    xlab = "Year", 
+    ylab = "Number of Girls Baptized in London Per Year", 
+    main = "Arbuthnot's Baptism Records for Girls 1629-1710"
+    )
+```
+
+
+**Answer**
+
+There appears to be an apparent trend between the number of girls baptized over the years. As time passes, the number girls baptized per year tends to increase with each passing year.
+
+
+
+### Exercise 3
+
+*Now, make a plot of the proportion of boys over time. What do you see?*
+
+
+```{r message = FALSE, warning = FALSE}
+# obtain ratio of boys to all children for each year and store in a data frame "proportionboys"
+arbuthnot$proportionboys <- arbuthnot$boys / (arbuthnot$boys + arbuthnot$girls)
+
+# generate plot of proportion of boys over time
+plot(
+      x = arbuthnot$year,
+      y = arbuthnot$proportionboys,
+      xlab = "Year",
+      ylab = "Proportion of Boys to all Children Baptized per Year in London",
+      main = "Arbuthnot's Baptism Records for Boys 1629-1710",
+      type = "l"
+)
+```
+
+
+
+
+## On Your Own
+
+**Set up Source for present.R**
+
+```{r message = FALSE, warning = FALSE}
+source("http://www.openintro.org/stat/data/present.R")
+```
+
+
+
+### Question 1
+
+*What are the dimensions of the data frame?*
+
+```{r message = FALSE, warning = FALSE}
+# use dim() command to view dimensions
+dim(present)
+```
+
+
+**Answer**
+
+The dimensions are 63 rows and 3 columns
+
+
+
+
+### Question 2
+
+*What are the variable or column names?*
+
+```{r message=FALSE, warning=FALSE}
+# Command to get names of the variables
+names(present)
+```
+
+**Answer**
+
+The variable names are "year","boys", and "girls"
+
+
+
+
+### Question 3
+
+*What years are included in this data set?*
+
+```{r message = FALSE, warning = FALSE}
+# attach variables to column names
+attach(present)
+year
+```
+
+
+**Answer**
+
+The data set includes all years from 1940 to 2002, for a total of 63 years
+
+
+
+
+### Question 4
+
+*How do these counts compare to Arbuthnot's? Are they on a similar scale?*
+
+```{r message = FALSE, warning = FALSE}
+## years
+
+# get range of years for Arbuthnot's data and the present data
+arbuthrange <- range(arbuthnot$year)
+presentrange <- range(year)
+
+# difference in years for both data sets
+arbuthrange[2] - arbuthrange[1]
+presentrange[2] - presentrange[1]
+
+
+## boys
+range(arbuthnot$boys)
+range(boys)
+
+## girls
+range(arbuthnot$girls)
+range(girls)
+
+```
+
+
+**Answer**
+
+The data for years between both data sets is similar, with the total number of years being 82 for Arbuthnot's data and 63 for the present data. However, for amount of boys and girls baptized per year, the present data is significantly larger than Arbuthnot's data, being measured in millions rather than thousands.
+
+
+
+### Question 5
+
+*Make a plot that displays the boy-to-girl ratio for every year in the data set. What do you see? Does Arbuthnot's observation about boys being born in greater proportion that girls hold up in the US?*
+
+```{r message = FALSE, warning = FALSE}
+# create variable for boy-to-girl ratio
+boygirlratio <- boys / girls
+
+# create plot of boy-to-girl ratio by year
+plot(
+      x = year,
+      y = boygirlratio,
+      main = "Present Data Set, 1940-2002",
+      xlab = "Year",
+      ylab = "Boy to Girl Ratio of Births",
+      type = "l"
+      )
+```
+
+
+**Answer**
+
+Arbuthnot's observation about boys being born in greater proportion than girls in the US does hold up in the earlier years of the data set, as shown by the boy to girl ratios. However, from 1940 to 2002, there is a clear trend where ratio decreases.
+
+
+### Question 6
+
+*In what year did we see the most total number of births in the US?*
+
+
+```{r message = FALSE, warning = FALSE}
+# create a variable for the total number of births
+presenttotal <- boys + girls
+# find maximum value of boys + girls
+max(presenttotal)
+# find corresponding year
+year[presenttotal == 4268326]
+```
+
+**Answer**
+
+1961 was the year that we saw the most total number of births in the US
