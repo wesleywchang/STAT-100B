@@ -1,0 +1,287 @@
+---
+title: "STAT 100B Lab 6"
+author: "Wesley Chang"
+date: "Sumemr 2020 Session B"
+output: 
+  pdf_document:
+    fig_crop: no
+---
+
+## Setup for Lab
+```{r message=FALSE, warning=FALSE}
+download.file("http://www.openintro.org/stat/data/mlb11.RData", destfile = "mlb11.RData")
+load("mlb11.RData")
+
+attach(mlb11)
+summary(mlb11)
+```
+
+# Lab Exercises
+
+## Exercise 1
+
+*What type of plot would you use to display the relationship between* `runs` *and one of the other numerical variables? Scatter plot would be a good choice. Plot this relationship using the variable* `at_bats` *as the predictor. Write down the R code for producing the scattter plot. The relationship should look somewhat linear. If you knew a team's* `at_bats`*, would you be comfortable using a linear model to predict the number of runs?*
+
+```{r message=FALSE, warning=FALSE}
+plot(at_bats, runs,
+      main="Runs vs At Bats",
+      xlab="At Bats",
+      ylab="Runs"
+     )
+```
+
+**Answer**
+
+If I knew a team's `at_bats`, I would be not be comfortable using a linear model to predict the number of runs, as the scatterplot indicates a general positive trend, but the relationship seems weak. A linear model may provide useful information about the general effect and trend that increasing at bats may have on runs, but I would not use it to predict specific values.
+
+
+## Exercise 2
+
+*Looking at your plot from the previous exercise, describe the relationship between these two variables. Do you see an upward trend or downward trend? Is it a strong linear relationship or a weak relationship?*
+
+**Answer**
+
+Looking at the plot, the relationship seems generally positive and upward, with a weaker linear relationship between the two variables.
+
+
+
+## Exercise 3
+
+*Using* `plot_ss`*, choose a line that does a good job of minimizing the sum of squares. Run the function several times. What was the smallest sum of squares that you got? How does it compare to your neighbors?*
+
+```{r message=FALSE, warning=FALSE}
+# scatterplot with user-inputted line
+plot_ss(x = mlb11$at_bats, y = mlb11$runs)
+plot_ss(x = mlb11$at_bats, y = mlb11$runs, showSquares=TRUE)
+
+# scatterplot with line based on minimized SSR
+
+```
+
+**Answer**
+
+The smallest sum of squares I got was 123729.9.
+
+## Exercise 4
+
+*Fit a new model that uses* `homeruns` *to predict* `runs`. *Using the estimates from the R output, write the equation of the regression line. What does the slope tell us in the context of the relationship between success of a team and its home runs?*
+
+```{r warning=FALSE, message=FALSE}
+m2 <- lm(runs ~ homeruns, data = mlb11)
+summary(m2)
+```
+
+**Answer**
+
+The equation of the regression line is $\hat{y}=415.2389+1.8345{x}$. The slope indicates that the relationship between the success of the team and its home runs is positive.
+
+
+## Exercise 5
+
+*If a team manager saw the least squares regression line and not the actual data, how many runs would he or she predict for a team with 5,578 at-bats? Is this an overestimate or an underestimate, and by how much? In other words, what is the residual for this prediction?*
+
+**Answer**
+
+```{r message=FALSE, warning=FALSE} 
+m1 <- lm(runs ~ at_bats, data = mlb11)
+summary(m1)
+plot(runs ~ at_bats)
+abline(m1)
+
+-2789.2429+0.6305*(5578)
+```
+
+**Answer**
+
+By only looking at the regression line, the manager would predict about 727.6861 runs for a team with 5,578 at-bats. The closest values in the data set that match 5,578 at-bats is 5,579 at-bats with 713 runs. Based on this, the residual would be 728-713 = 15 runs, indicating that the manager would overestimate the runs.
+
+
+## Exercise 6
+
+*Linearity: Is there any apparent pattern in the residuals itself? What does this indicate about the linearity of the relationship btween runs and at-bats?*
+
+```{r message = FALSE, warning = FALSE}
+plot(m1$residuals ~ mlb11$at_bats)
+abline(h = 0, lty = 3)
+```
+
+**Answer**
+
+Based on the residual plot, there does not appear to be any pattern in the residuals, and the data may be skewed. However, the data still appears to be linear.
+
+
+## Exercise 7
+
+*Nearly normal residuals: Based on the histogram and the normal probability plot, does the nearly normal residuals condition appear to be met?*
+
+```{r message=FALSE, warning=FALSE}
+## check normality plot
+
+# method 1
+hist(m1$residuals)
+
+# method 2
+qqnorm(m1$residuals)
+qqline(m1$residuals)
+```
+
+**Answer**
+
+Based on the histogram and the normality plot, the distribution of residuals appears fairly normal, and that this meets the condition of nearly normal residuals.
+
+
+## Exercise 8
+
+*Constant variability: Based on the plot in (1), does the constant variability condition appear to be met?*
+
+**Answer**
+
+Based on the plot of points, the variability appears fairly constant through the data. I conclude that the condition of constant variability is met.
+
+
+
+# On Your Own
+
+## Question 1
+
+*Choose another traditional variable* `hits` *from* `mlb11` *that we think might be a good predictor of* `runs`. *Show your R code to fit a linear model. At a glance, does there seem to be a linear relationship?*
+
+```{r message = FALSE, warning = FALSE}
+m3 <- lm(runs ~ hits, data = mlb11)
+summary(m3)
+
+plot(hits, runs,
+      main="Runs vs Hits",
+      xlab="Hits",
+      ylab="Runs"
+     )
+abline(m3)
+```
+
+**Answer**
+
+At a glance, there does seem to a linear relationship, as the regression line appears to be a fairly good fit for the data.
+
+
+
+## Question 2
+
+*How does this relationship compare to the relationship between* `runs` *and* `at_bats`*? Use the* ${R}^{2}$ *values from the two model summaries to compare.*
+
+```{r message = FALSE, warning=FALSE}
+summary(m1)
+summary(m3)
+```
+
+**Answer**
+
+The ${R}^{2}$ for the regression between `runs` and `hits` is higher than the ${R}^{2}$ of the regression between `runs` and `at_bats` at 0.6419 vs 0.3729. This may mean that the new model explains 26.9% more of the variation in the data than the previous model between `runs` and `at_bats`, indicating that it may be the better model.
+
+
+## Question 3
+
+*Now that you can summarize the linear relationship between two variables, investigate the relationships between* `runs` *and each of the other four traditional variables:* `bat_avg`*,* `strikeouts`*,* `stolen_bases`*, and* `wins`*. Which variable best predicts* `runs`*? Support your conclusion using the graphical and numerical methods we've discussed (for the sake of conciseness, only include output for the best variable, not all four).*
+
+```{r message = FALSE, warning = FALSE}
+summary(lm(runs ~ bat_avg, data = mlb11))$r.squared
+summary(lm(runs ~ strikeouts, data = mlb11))$r.squared
+summary(lm(runs ~ stolen_bases, data = mlb11))$r.squared
+summary(lm(runs ~ wins, data = mlb11))$r.squared
+```
+
+```{r message=FALSE, warnng=FALSE}
+# The data with the highest R-squared is the regression between runs and batting average, 0.6560771
+
+## support conclusion using graphical and numerical methods
+
+# 1: look at correlation
+cor(runs, bat_avg)
+
+# 2: look at scatterplot and regresion line
+m4 <- lm(runs~bat_avg,data=mlb11)
+summary(m4)
+
+plot(runs~bat_avg,
+     main="Regression Line of Runs vs Batting Average",
+     xlab = "Batting Average",
+     ylab = "Runs"
+     )
+abline(m4)
+
+# 3: checking linearity using residuals
+plot(m4$residuals~at_bats,
+     main="Residual plot of at_bats"
+     )
+abline(h = 0, lty = 3)
+
+# 4: Checking for nearly normal residuals
+hist(m4$residuals)
+qqnorm(m4$residuals)
+qqline(m4$residuals)
+```
+
+**Answer**
+
+From comparing the ${R}^{2}$ of the different variables, we see that batting average has the highest value, 0.6561. From the graphs we generated, we can see that the data for batting average supports the conditions needed for linear regression.
+
+
+## Question 4
+
+*Now examine the three newer variables,* `new_slug`*,* `new_obs`*,* `new_onbase`*. These are the statistics used by the author of Moneyball to predict a team's success. Of all ten variables we've analyzed, which seems to be the best predictor of* `runs`*?*
+
+```{r message = FALSE, warning = FALSE}
+# examine correlation
+cor(runs, new_slug)
+cor(runs, new_obs)
+cor(runs, new_onbase)
+
+# compare R-squared values
+summary(lm(runs~new_slug, data = mlb11))$r.squared
+summary(lm(runs~new_obs, data = mlb11))$r.squared
+summary(lm(runs~new_onbase, data = mlb11))$r.squared
+```
+
+**Answer**
+
+Based on ${R}^{2}$ values, the regression model with `new_obs` seems to be the best predictor of `runs`, with the largest value of 0.9349. 
+
+
+## Question 5
+
+*Check the model diagnostics for the regression model with the variable you decided was the best predictor for runs.*
+
+
+```{r message = FALSE, warning = FALSE}
+# The data with the highest R-squared is the regression between runs and new_obs, 0.9349
+
+## support conclusion using graphical and numerical methods
+
+# 1: look at correlation
+cor(runs, new_obs)
+
+# 2: look at scatterplot and regresion line
+m5 <- lm(runs~new_obs,data=mlb11)
+summary(m5)
+
+plot(runs~new_obs,
+     main="Regression Line of Runs vs new_obs",
+     xlab = "new_obs",
+     ylab = "Runs"
+     )
+abline(m5)
+
+# 3: checking linearity using residuals
+plot(m5$residuals~new_obs,
+     main="Residual plot of new_obs"
+     )
+abline(h = 0, lty = 3)
+
+# 4: Checking for nearly normal residuals
+hist(m5$residuals)
+qqnorm(m5$residuals)
+qqline(m5$residuals)
+```
+
+**Answer**
+
+Based on the model diagnostics for `new_obs`, the data seems to meet all of the conditions for simple linear regression. 
